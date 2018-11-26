@@ -46,13 +46,15 @@ class BoxLayoutDemo(App):
 
 def RollDice():
     app = App.get_running_app()
-    for button in app.buttons:
-        button.text = str(random.randint(app.min, app.max))
-        button.font_size = 50
-        button.background_color = (1,1,1,1)
+    for i in range(0,app.buttonCount):
+        # if button.disabled != 'True':
+        app.buttons[i].text = str(random.randint(app.min, app.max))
+        app.buttons[i].font_size = 100
+        app.buttons[i].background_color = (1,1,1,1)
 
-def ResetCallback():
+def ResetCallback(instance):
     app = App.get_running_app()
+    app.buttonCount = 5
     for button in app.buttons:
         button.disabled = False
     RollDice()
@@ -68,18 +70,18 @@ def AddButtons(dicebox, amount):
 def ButtonCallback(instance):
     b = Button()    # lets us get autocomplete on buttons in callbacks lololol
     b = instance
-    if b.font_size != 130:
-        b.font_size = 130
+    if b.font_size != 190:
+        b.font_size = 190
         b.background_color = (0,1,0,1)
     else:
-        b.font_size = 50
+        b.font_size = 100
         b.background_color = (1,1,1,1)
 
 def LostCallback(instance):
     app = App.get_running_app()
     if app.buttonCount > 0:
         app.buttonCount -= 1
-        b = app.buttons.pop()
+        b = app.buttons[app.buttonCount]
         b.text = ""
         b.disabled = True
 
@@ -91,7 +93,7 @@ def PeekCallback(instance):
         for button in app.buttons:
             aa = Button()
             aa = button
-            aa.font_size = 50
+            aa.font_size = 100
     else:
         for button in app.buttons:
             aa = Button()
