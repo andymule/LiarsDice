@@ -5,12 +5,19 @@ from __future__ import unicode_literals
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-
-# Boxlayout is the App class
-
+from kivy.lang.builder import Builder
+from kivy.uix.screenmanager import Screen, ScreenManager
+import random
 
 class BoxLayoutDemo(App):
+    min = 1
+    max = 6
+    buttonCount = 5
+    buttons = []
+    DiceBox = BoxLayout()
+
     def build(self):
+        app = App.get_running_app()
         superBox = BoxLayout(orientation='vertical')
 
         UIBoxTop = BoxLayout(orientation='vertical')
@@ -20,48 +27,76 @@ class BoxLayoutDemo(App):
         buttonLost = Button(text="Lost")
         buttonLost.bind(on_press=LostCallback)
         UIBoxTop.add_widget(buttonLost)
-        buttonShow = Button(text="Show")
-        buttonShow.bind(on_press=ShowCallback)
-        UIBoxTop.add_widget(buttonShow)
         superBox.add_widget(UIBoxTop)
 
         DiceBox = BoxLayout(orientation='horizontal')
-        button1 = Button(text="1")
-        button1.bind(on_press=ButtonCallback)
-        button2 = Button(text="2")
-        button2.bind(on_press=ButtonCallback)
-        button3 = Button(text="3")
-        button3.bind(on_press=ButtonCallback)
-        button4 = Button(text="4")
-        button4.bind(on_press=ButtonCallback)
-        button5 = Button(text="X")
-        button5.bind(on_press=ButtonCallback)
-        DiceBox.add_widget(button1)
-        DiceBox.add_widget(button2)
-        DiceBox.add_widget(button3)
-        DiceBox.add_widget(button4)
-        DiceBox.add_widget(button5)
+        AddButtons(DiceBox, app.buttonCount)
 
         verticalBox = BoxLayout(orientation='vertical')
-        button4 = Button(text="Peek")
-        verticalBox.add_widget(button4)
+        buttonPeek = Button(text="Peek-n-Hide")
+        buttonPeek.bind(on_press=PeekCallback, on_release=PeekCallback)
+        verticalBox.add_widget(buttonPeek)
         superBox.add_widget(DiceBox)
         superBox.add_widget(verticalBox)
+        RollDice()
         return superBox
 
-# def ButtonCallback(instance, value):
+def RollDice():
+    app = App.get_running_app()
+    for button in app.buttons:
+        button.text = str(random.randint(app.min, app.max))
+        button.font_size = 15
+        button.background_color = (1,1,1,1)
+
+def AddButtons(dicebox, amount):
+    app = App.get_running_app()
+    for i in range(0,amount):
+        b = Button(text="X")
+        b.bind(on_press=ButtonCallback)
+        dicebox.add_widget(b)
+        app.buttons.append(b)
+
 def ButtonCallback(instance):
-    print('My callback <%s> state is ' % (instance))
-    # instance.background_color
+    b = Button()    # lets us get autocomplete on buttons in callbacks lololol
+    b = instance
+    if b.font_size != 80:
+        b.font_size = 80
+        b.background_color = (0,1,0,1)
+    else:
+        b.font_size = 15
+        b.background_color = (1,1,1,1)
 
 def LostCallback(instance):
-    print('My lost <%s> state is ' % (instance))
+    app = App.get_running_app()
+    if app.buttonCount > 0:
+        app.buttonCount -= 1
+        b = app.buttons.pop()
+        b.text = ""
+        b.disabled = True
+
+def PeekCallback(instance):
+    app = App.get_running_app()
+    bb = Button()
+    bb = instance
+    if bb.state == "down":
+        for button in app.buttons:
+            aa = Button()
+            aa = button
+            aa.font_size = 15
+    else:
+        for button in app.buttons:
+            aa = Button()
+            aa = button
+            aa.font_size = 0
+            aa.background_color = (1,1,1,1)
 
 def RollCallback(instance):
-    print('My roll <%s> state is ' % (instance))
+    RollDice()
     
 def ShowCallback(instance):
-    print('My show <%s> state is ' % (instance))
+    b = Button()    # lets us get autocomplete on buttons in callbacks lololol
+    b = instance
+    b.background_color = (0,1,0,1)
 
 # Instantiate and run the kivy app
 if __name__ == '__main__':
