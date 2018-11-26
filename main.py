@@ -27,6 +27,9 @@ class BoxLayoutDemo(App):
         buttonLost = Button(text="Lost")
         buttonLost.bind(on_press=LostCallback)
         UIBoxTop.add_widget(buttonLost)
+        buttonReset = Button(text="RESET")
+        buttonReset.bind(on_press=ResetCallback)
+        UIBoxTop.add_widget(buttonReset)
         superBox.add_widget(UIBoxTop)
 
         DiceBox = BoxLayout(orientation='horizontal')
@@ -45,8 +48,14 @@ def RollDice():
     app = App.get_running_app()
     for button in app.buttons:
         button.text = str(random.randint(app.min, app.max))
-        button.font_size = 15
+        button.font_size = 50
         button.background_color = (1,1,1,1)
+
+def ResetCallback():
+    app = App.get_running_app()
+    for button in app.buttons:
+        button.disabled = False
+    RollDice()
 
 def AddButtons(dicebox, amount):
     app = App.get_running_app()
@@ -59,11 +68,11 @@ def AddButtons(dicebox, amount):
 def ButtonCallback(instance):
     b = Button()    # lets us get autocomplete on buttons in callbacks lololol
     b = instance
-    if b.font_size != 80:
-        b.font_size = 80
+    if b.font_size != 130:
+        b.font_size = 130
         b.background_color = (0,1,0,1)
     else:
-        b.font_size = 15
+        b.font_size = 50
         b.background_color = (1,1,1,1)
 
 def LostCallback(instance):
@@ -82,7 +91,7 @@ def PeekCallback(instance):
         for button in app.buttons:
             aa = Button()
             aa = button
-            aa.font_size = 15
+            aa.font_size = 50
     else:
         for button in app.buttons:
             aa = Button()
